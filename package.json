@@ -2,15 +2,7 @@
   "author": "author",
   "name": "name",
   "description": "description",
-  "version": "0.1",
-  "homepage": "",
-  "repository": {
-    "type": "git",
-    "url": ""
-  },
-  "engines": {
-    "node": "0.8 || 0.9"
-  },
+  "version": "1.0.0",
   "scripts": {
     "start": "brunch watch --server"
   },
@@ -19,7 +11,7 @@
     "coffee-script-brunch": ">= 1.0 < 1.5",
     "css-brunch": ">= 1.0 < 1.5",
     "stylus-brunch": ">= 1.0 < 1.5",
-    "ember-precompiler-brunch": "git@github.com:chrixian/ember-precompiler-brunch.git"
+    "ember-precompiler-brunch": ">= 1.0 < 1.5",
     "uglify-js-brunch": ">= 1.0 < 1.5",
     "clean-css-brunch": ">= 1.0 < 1.5"
   },
