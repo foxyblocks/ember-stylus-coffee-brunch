@@ -1,4 +1,11 @@
-<h1>ApplicationView</h1>
-<div class="main">
-    {{outlet}}
+<div class="navbar navbar-fixed-top">
+  {{outlet navbar}} 
+</div>
+<div class="row-fluid">
+  <div class="span2">
+    {{outlet sidebar}}
+  </div>
+  <div class="span10">
+    {{outlet main}}
+  </div>
 </div>

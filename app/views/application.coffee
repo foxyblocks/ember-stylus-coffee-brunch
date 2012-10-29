@@ -1,5 +1,3 @@
-App = require 'app'
-
 App.ApplicationView = Em.View.extend
-  templateName: require 'templates/application'
-  classNames: ['container']
+  templateName: 'templates/application'
+  classNames: ['container-fluid']

@@ -12,6 +12,7 @@ exports.config =
         before: [
           'vendor/scripts/console-helper.js'
           'vendor/scripts/jquery.js'
+          'vendor/scripts/bootstrap.js'
           'vendor/scripts/handlebars.js'
           'vendor/scripts/ember.js'
           'vendor/scripts/ember-data.js'
@@ -20,6 +21,11 @@ exports.config =
       defaultExtension: 'styl'
       joinTo:
         'css/style.css': /^(app|vendor)/
+      order:
+        before: [
+          'vendor/styles/bootstrap.css'
+          'vendor/styles/bootstrap-responsive.css'
+        ]
     templates:
       precompile: true
       defaultExtension: 'hbs'

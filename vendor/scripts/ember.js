@@ -1,5 +1,5 @@
-// Version: v1.0.0-pre.2-2-g1e4bdd5
-// Last commit: 1e4bdd5 (2012-10-25 14:04:52 -0700)
+// Version: v1.0.0-pre.2-4-gb1c0b4c
+// Last commit: b1c0b4c (2012-10-26 16:31:11 -0700)
 
 
 (function() {
@@ -140,8 +140,8 @@ window.ember_deprecateFunc  = Ember.deprecateFunc("ember_deprecateFunc is deprec
 
 })();
 
-// Version: v1.0.0-pre.2-2-g1e4bdd5
-// Last commit: 1e4bdd5 (2012-10-25 14:04:52 -0700)
+// Version: v1.0.0-pre.2-4-gb1c0b4c
+// Last commit: b1c0b4c (2012-10-26 16:31:11 -0700)
 
 
 (function() {
@@ -20399,7 +20399,7 @@ EmberHandlebars.registerHelper('bind', function(property, options) {
   @private
 
   Use the `boundIf` helper to create a conditional that re-evaluates
-  whenever the bound value changes.
+  whenever the truthiness of the bound value changes.
 
   ``` handlebars
   {{#boundIf "content.shouldDisplayTitle"}}
@@ -20473,6 +20473,8 @@ EmberHandlebars.registerHelper('with', function(context, options) {
 
 
 /**
+  See `boundIf`
+
   @method if
   @for Ember.Handlebars.helpers
   @param {Function} context
@@ -23147,8 +23149,8 @@ Ember Handlebars
 
 })();
 
-// Version: v1.0.0-pre.2-2-g1e4bdd5
-// Last commit: 1e4bdd5 (2012-10-25 14:04:52 -0700)
+// Version: v1.0.0-pre.2-4-gb1c0b4c
+// Last commit: b1c0b4c (2012-10-26 16:31:11 -0700)
 
 
 (function() {

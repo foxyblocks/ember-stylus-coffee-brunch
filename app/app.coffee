@@ -1,3 +1,2 @@
-# app
-
-module.exports = Em.Application.create()
+module.exports = Em.Application.create
+  version: '1.0'
