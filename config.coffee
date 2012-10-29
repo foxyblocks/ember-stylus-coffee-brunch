@@ -13,6 +13,7 @@ exports.config =
           'vendor/scripts/console-helper.js'
           'vendor/scripts/jquery.js'
           'vendor/scripts/bootstrap.js'
+          'vendor/scripts/lodash.js'
           'vendor/scripts/handlebars.js'
           'vendor/scripts/ember.js'
           'vendor/scripts/ember-data.js'
