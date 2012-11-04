@@ -36,6 +36,7 @@ exports.config =
         handlebars: 'vendor/scripts/handlebars.js'
         ember: 'vendor/scripts/ember.js'
   server:
+    path: 'server.coffee'
     port: 1337
     base: '/'
     run: yes
