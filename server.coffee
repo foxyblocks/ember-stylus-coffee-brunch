@@ -1,28 +1,24 @@
-express = require 'express'
+connect = require 'connect'
 http = require 'http'
 path = require 'path'
 
 startServer = (port, publicPath, onListeningCallback) ->
-  app = express()
+  app = connect()
 
-  app.configure ->
-    app.set 'port', port
+  app.use connect.favicon()
+  app.use connect.logger('dev')
+  app.use connect.bodyParser()
+  app.use connect.methodOverride()
+  app.use connect.cookieParser('super secret codez')
+  app.use connect.session()
 
-    app.use express.favicon()
-    app.use express.logger 'dev'
-    app.use express.bodyParser()
-    app.use express.methodOverride()
-    app.use express.cookieParser 'super secret codez'
-    app.use express.session()
-    app.use app.router
+  app.use connect.static(path.join(__dirname, publicPath))
 
-    app.use express.static path.join __dirname, publicPath
+  app.use connect.errorHandler()
 
-    app.use express.errorHandler()
+  server = http.createServer(app)
 
-  server = http.createServer app
-
-  server.listen app.get('port'), onListeningCallback
+  server.listen port, onListeningCallback
 
   server
 

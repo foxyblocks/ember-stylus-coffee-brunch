@@ -1,1 +1,0 @@
-App.NavBarController = Em.Controller.extend()
