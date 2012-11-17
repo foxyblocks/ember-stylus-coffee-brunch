@@ -1,5 +1,5 @@
-// Version: v1.0.0-pre.2-24-g991689c
-// Last commit: 991689c (2012-11-01 20:50:28 -0700)
+// Version: v1.0.0-pre.2-38-g9351b18
+// Last commit: 9351b18 (2012-11-16 12:23:15 -0800)
 
 
 (function() {
@@ -140,8 +140,8 @@ window.ember_deprecateFunc  = Ember.deprecateFunc("ember_deprecateFunc is deprec
 
 })();
 
-// Version: v1.0.0-pre.2-24-g991689c
-// Last commit: 991689c (2012-11-01 20:50:28 -0700)
+// Version: v1.0.0-pre.2-38-g9351b18
+// Last commit: 9351b18 (2012-11-16 12:23:15 -0800)
 
 
 (function() {
@@ -3934,7 +3934,7 @@ Ember.RunLoop = RunLoop;
   call.
 
       Ember.run(function(){
-        // code to be execute within a RunLoop 
+        // code to be execute within a RunLoop
       });
 
   @class run
@@ -3968,7 +3968,7 @@ var run = Ember.run;
   an lower-level way to use a RunLoop instead of using Ember.run().
 
       Ember.run.begin();
-      // code to be execute within a RunLoop 
+      // code to be execute within a RunLoop
       Ember.run.end();
 
   @method begin
@@ -3984,7 +3984,7 @@ Ember.run.begin = function() {
   instead of using Ember.run().
 
       Ember.run.begin();
-      // code to be execute within a RunLoop 
+      // code to be execute within a RunLoop
       Ember.run.end();
 
   @method end
@@ -6035,7 +6035,7 @@ Ember.inspect = function(obj) {
 /**
   Compares two objects, returning true if they are logically equal.  This is
   a deeper comparison than a simple triple equal. For sets it will compare the
-  internal objects.  For any other object that implements `isEqual()` it will 
+  internal objects.  For any other object that implements `isEqual()` it will
   respect that method.
 
       Ember.isEqual('hello', 'hello');  => true
@@ -8140,7 +8140,7 @@ Ember.MutableArray = Ember.Mixin.create(Ember.Array, Ember.MutableEnumerable,
         colors.length(); => 0
 
     @method clear
-    @return {Ember.Array} An empty Array. 
+    @return {Ember.Array} An empty Array.
   */
   clear: function () {
     var len = get(this, 'length');
@@ -9975,7 +9975,7 @@ Ember.ArrayProxy = Ember.Object.extend(Ember.MutableArray,
    The array that the proxy pretends to be. In the default `ArrayProxy`
    implementation, this and `content` are the same. Subclasses of `ArrayProxy`
    can override this property to provide things like sorting and filtering.
-   
+
    @property arrangedContent
   */
   arrangedContent: Ember.computed('content', function() {
@@ -10619,7 +10619,7 @@ Ember.NativeArray = NativeArray;
 */
 Ember.A = function(arr){
   if (arr === undefined) { arr = []; }
-  return Ember.NativeArray.apply(arr);
+  return Ember.Array.detect(arr) ? arr : Ember.NativeArray.apply(arr);
 };
 
 /**
@@ -12483,9 +12483,10 @@ Ember.EventDispatcher = Ember.Object.extend(
 */
 
 // Add a new named queue for rendering views that happens
-// after bindings have synced.
+// after bindings have synced, and a queue for scheduling actions
+// that that should occur after view rendering.
 var queues = Ember.run.queues;
-queues.splice(Ember.$.inArray('actions', queues)+1, 0, 'render');
+queues.splice(Ember.$.inArray('actions', queues)+1, 0, 'render', 'afterRender');
 
 })();
 
@@ -13641,7 +13642,7 @@ Ember.View = Ember.CoreView.extend(
       return get(parentView, '_context');
     }
 
-    return this;
+    return null;
   }),
 
   /**
@@ -13868,7 +13869,8 @@ Ember.View = Ember.CoreView.extend(
         view: this,
         buffer: buffer,
         isRenderData: true,
-        keywords: keywords
+        keywords: keywords,
+        insideGroup: get(this, 'templateData.insideGroup')
       };
 
       // Invoke the template with the provided template context, which
@@ -13992,10 +13994,6 @@ Ember.View = Ember.CoreView.extend(
         // Get the current value of the property
         newClass = this._classStringForProperty(binding);
         elem = this.$();
-        if (!elem) {
-          removeObserver(this, parsedPath.path, observer);
-          return;
-        }
 
         // If we had previously added a class to the element, remove it.
         if (oldClass) {
@@ -15541,7 +15539,7 @@ var childViewsProperty = Ember.computed(function() {
   });
 
   aContainer.appendTo('body');
-  ``` 
+  ```
 
   Results in the HTML
 
@@ -15956,7 +15954,7 @@ var get = Ember.get, set = Ember.set, fmt = Ember.String.fmt;
 
 /**
   `Ember.CollectionView` is an `Ember.View` descendent responsible for managing a
-  collection (an array or array-like object) by maintaing a child view object and 
+  collection (an array or array-like object) by maintaing a child view object and
   associated DOM representation for each item in the array and ensuring that child
   views and their associated rendered HTML are updated when items in the array
   are added, removed, or replaced.
@@ -15981,7 +15979,7 @@ var get = Ember.get, set = Ember.set, fmt = Ember.String.fmt;
 
   Given an empty `<body>` and the following code:
 
-  ``` javascript 
+  ``` javascript
   someItemsView = Ember.CollectionView.create({
     classNames: ['a-collection'],
     content: ['A','B','C'],
@@ -16005,7 +16003,7 @@ var get = Ember.get, set = Ember.set, fmt = Ember.String.fmt;
 
   ## Automatic matching of parent/child tagNames
 
-  Setting the `tagName` property of a `CollectionView` to any of 
+  Setting the `tagName` property of a `CollectionView` to any of
   "ul", "ol", "table", "thead", "tbody", "tfoot", "tr", or "select" will result
   in the item views receiving an appropriately matched `tagName` property.
 
@@ -16043,7 +16041,7 @@ var get = Ember.get, set = Ember.set, fmt = Ember.String.fmt;
   For cases where additional customization beyond the use of a single `itemViewClass`
   or `tagName` matching is required CollectionView's `createChildView` method can be
   overidden:
-  
+
   ``` javascript
   CustomCollectionView = Ember.CollectionView.extend({
     createChildView: function(viewClass, attrs) {
@@ -16056,7 +16054,7 @@ var get = Ember.get, set = Ember.set, fmt = Ember.String.fmt;
     }
   });
   ```
-  
+
   ## Empty View
   You can provide an `Ember.View` subclass to the `Ember.CollectionView` instance as its
   `emptyView` property. If the `content` property of a `CollectionView` is set to `null`
@@ -17651,13 +17649,13 @@ Ember.Routable = Ember.Mixin.create({
   */
   absoluteRoute: function(manager, hashes) {
     var parentState = get(this, 'parentState'),
-      path = '', 
+      path = '',
       generated,
       currentHash;
 
     // check if object passed instead of array
-    // in this case set currentHash = hashes 
-    // this allows hashes to be a single hash 
+    // in this case set currentHash = hashes
+    // this allows hashes to be a single hash
     // (it will be applied to state and all parents)
     currentHash = null;
     if (hashes) {
@@ -18440,7 +18438,7 @@ Ember.HistoryLocation = Ember.Object.extend({
   setURL: function(path) {
     path = this.formatURL(path);
 
-    if (this.getState().path !== path) {
+    if (this.getState() && this.getState().path !== path) {
       popstateReady = true;
       this.pushState(path);
     }
@@ -19069,7 +19067,7 @@ Ember.Router = Ember.StateManager.extend(
   },
 
   serializeRecursively: function(state, contexts, hashes) {
-    var parentState, 
+    var parentState,
 			context = get(state, 'hasContext') ? contexts.pop() : null,
       hash = context ? state.serialize(this, context) : null;
 
@@ -20293,7 +20291,8 @@ function bind(property, options, preserveContext, shouldDisplay, valueNormalizer
       inverse = options.inverse,
       view = data.view,
       currentContext = this,
-      pathRoot, path, normalized;
+      pathRoot, path, normalized,
+      observer;
 
   normalized = normalizePath(currentContext, property, data);
 
@@ -20302,27 +20301,47 @@ function bind(property, options, preserveContext, shouldDisplay, valueNormalizer
 
   // Set up observers for observable objects
   if ('object' === typeof this) {
-    // Create the view that will wrap the output of this template/property
-    // and add it to the nearest view's childViews array.
-    // See the documentation of Ember._HandlebarsBoundView for more.
-    var bindView = view.createChildView(Ember._HandlebarsBoundView, {
-      preserveContext: preserveContext,
-      shouldDisplayFunc: shouldDisplay,
-      valueNormalizerFunc: valueNormalizer,
-      displayTemplate: fn,
-      inverseTemplate: inverse,
-      path: path,
-      pathRoot: pathRoot,
-      previousContext: currentContext,
-      isEscaped: !options.hash.unescaped,
-      templateData: options.data
-    });
+    if (data.insideGroup) {
+      observer = function() {
+        Ember.run.once(view, 'rerender');
+      };
 
-    view.appendChild(bindView);
+      var template, context, result = handlebarsGet(pathRoot, path, options);
 
-    var observer = function() {
-      Ember.run.scheduleOnce('render', bindView, 'rerenderIfNeeded');
-    };
+      result = valueNormalizer(result);
+
+      context = preserveContext ? currentContext : result;
+      if (shouldDisplay(result)) {
+        template = fn;
+      } else if (inverse) {
+        template = inverse;
+      }
+
+      template(context, { data: options.data });
+    } else {
+      // Create the view that will wrap the output of this template/property
+      // and add it to the nearest view's childViews array.
+      // See the documentation of Ember._HandlebarsBoundView for more.
+      var bindView = view.createChildView(Ember._HandlebarsBoundView, {
+        preserveContext: preserveContext,
+        shouldDisplayFunc: shouldDisplay,
+        valueNormalizerFunc: valueNormalizer,
+        displayTemplate: fn,
+        inverseTemplate: inverse,
+        path: path,
+        pathRoot: pathRoot,
+        previousContext: currentContext,
+        isEscaped: !options.hash.unescaped,
+        templateData: options.data
+      });
+
+      view.appendChild(bindView);
+
+      /** @private */
+      observer = function() {
+        Ember.run.scheduleOnce('render', bindView, 'rerenderIfNeeded');
+      };
+    }
 
     // Observes the given property on the context and
     // tells the Ember._HandlebarsBoundView to re-render. If property
@@ -20346,7 +20365,8 @@ function simpleBind(property, options) {
   var data = options.data,
       view = data.view,
       currentContext = this,
-      pathRoot, path, normalized;
+      pathRoot, path, normalized,
+      observer;
 
   normalized = normalizePath(currentContext, property, data);
 
@@ -20355,20 +20375,30 @@ function simpleBind(property, options) {
 
   // Set up observers for observable objects
   if ('object' === typeof this) {
-    var bindView = Ember._SimpleHandlebarsView.create().setProperties({
-      path: path,
-      pathRoot: pathRoot,
-      isEscaped: !options.hash.unescaped,
-      previousContext: currentContext,
-      templateData: options.data
-    });
+    if (data.insideGroup) {
+      observer = function() {
+        Ember.run.once(view, 'rerender');
+      };
 
-    view.createChildView(bindView);
-    view.appendChild(bindView);
+      var result = handlebarsGet(pathRoot, path, options);
+      if (result === null || result === undefined) { result = ""; }
+      data.buffer.push(result);
+    } else {
+      var bindView = Ember._SimpleHandlebarsView.create().setProperties({
+        path: path,
+        pathRoot: pathRoot,
+        isEscaped: !options.hash.unescaped,
+        previousContext: currentContext,
+        templateData: options.data
+      });
 
-    var observer = function() {
-      Ember.run.scheduleOnce('render', bindView, 'rerender');
-    };
+      view.createChildView(bindView);
+      view.appendChild(bindView);
+
+      observer = function() {
+        Ember.run.scheduleOnce('render', bindView, 'rerender');
+      };
+    }
 
     // Observes the given property on the context and
     // tells the Ember._HandlebarsBoundView to re-render. If property
@@ -20663,7 +20693,7 @@ EmberHandlebars.registerHelper('unless', function(context, options) {
   ```
 
   Results in the following rendered output:
-  <img class=":class-name-to-always-apply">
+  <img class="class-name-to-always-apply">
 
   All three strategies - string return value, boolean return value, and
   hard-coded value – can be combined in a single declaration:
@@ -21068,7 +21098,7 @@ EmberHandlebars.ViewHelper = Ember.Object.create({
 
   ``` html
   <body>
-    <!-- Note: the handlebars template script 
+    <!-- Note: the handlebars template script
          also results in a rendered Ember.View
          which is the outer <div> here -->
 
@@ -21093,7 +21123,7 @@ EmberHandlebars.ViewHelper = Ember.Object.create({
 
   aView.appendTo('body');
   ```
-    
+
   Will result in HTML structure:
 
   ``` html
@@ -21183,7 +21213,7 @@ EmberHandlebars.ViewHelper = Ember.Object.create({
 
   ``` html
   <div id="ember1" class="ember-view">
-    <div id="ember2" class="ember-view a-custom-view-class-as-property"> 
+    <div id="ember2" class="ember-view a-custom-view-class-as-property">
       hi
     </div>
   </div>
@@ -21580,6 +21610,94 @@ Ember.Handlebars.EachView = Ember.CollectionView.extend(Ember._Metamorph, {
   }
 });
 
+var GroupedEach = Ember.Handlebars.GroupedEach = function(context, path, options) {
+  var self = this,
+      normalized = Ember.Handlebars.normalizePath(context, path, options.data);
+
+  this.context = context;
+  this.path = path;
+  this.options = options;
+  this.template = options.fn;
+  this.containingView = options.data.view;
+  this.normalizedRoot = normalized.root;
+  this.normalizedPath = normalized.path;
+  this.content = this.lookupContent();
+
+  this.addContentObservers();
+  this.addArrayObservers();
+
+  this.containingView.on('willClearRender', function() {
+    self.destroy();
+  });
+};
+
+GroupedEach.prototype = {
+  contentWillChange: function() {
+    this.removeArrayObservers();
+  },
+
+  contentDidChange: function() {
+    this.content = this.lookupContent();
+    this.addArrayObservers();
+    this.rerenderContainingView();
+  },
+
+  contentArrayWillChange: Ember.K,
+
+  contentArrayDidChange: function() {
+    this.rerenderContainingView();
+  },
+
+  lookupContent: function() {
+    return Ember.Handlebars.get(this.normalizedRoot, this.normalizedPath, this.options);
+  },
+
+  addArrayObservers: function() {
+    this.content.addArrayObserver(this, {
+      willChange: 'contentArrayWillChange',
+      didChange: 'contentArrayDidChange'
+    });
+  },
+
+  removeArrayObservers: function() {
+    this.content.removeArrayObserver(this, {
+      willChange: 'contentArrayWillChange',
+      didChange: 'contentArrayDidChange'
+    });
+  },
+
+  addContentObservers: function() {
+    Ember.addBeforeObserver(this.normalizedRoot, this.normalizedPath, this, this.contentWillChange);
+    Ember.addObserver(this.normalizedRoot, this.normalizedPath, this, this.contentDidChange);
+  },
+
+  removeContentObservers: function() {
+    Ember.removeBeforeObserver(this.normalizedRoot, this.normalizedPath, this.contentWillChange);
+    Ember.removeObserver(this.normalizedRoot, this.normalizedPath, this.contentDidChange);
+  },
+
+  render: function() {
+    var content = this.content,
+        contentLength = get(content, 'length'),
+        data = this.options.data,
+        template = this.template;
+
+    data.insideEach = true;
+    for (var i = 0; i < contentLength; i++) {
+      template(content.objectAt(i), { data: data });
+    }
+  },
+
+  rerenderContainingView: function() {
+    Ember.run.scheduleOnce('render', this.containingView, 'rerender');
+  },
+
+  destroy: function() {
+    this.removeContentObservers();
+    this.removeArrayObservers();
+  }
+};
+
 /**
   The `{{#each}}` helper loops over elements in a collection, rendering its block once for each item:
 
@@ -21623,7 +21741,7 @@ Ember.Handlebars.EachView = Ember.CollectionView.extend(Ember._Metamorph, {
   ``` handlebars
   <script type="text/x-handlebars">
     {{#view App.MyView }}
-      {{each view.items itemViewClass="App.AnItemView"}} 
+      {{each view.items itemViewClass="App.AnItemView"}}
     {{/view}}
   </script>
   ```
@@ -21644,10 +21762,10 @@ Ember.Handlebars.EachView = Ember.CollectionView.extend(Ember._Metamorph, {
   App.AnItemView = Ember.View.extend({
     template: Ember.Handlebars.compile("Greetings {{name}}")
   });
-      
+
   App.initialize();
   ```
-      
+
   Will result in the HTML structure below
 
   ``` html
@@ -21683,7 +21801,11 @@ Ember.Handlebars.registerHelper('each', function(path, options) {
   // Set up emptyView as a metamorph with no tag
   //options.hash.emptyViewClass = Ember._MetamorphView;
 
-  return Ember.Handlebars.helpers.collection.call(this, 'Ember.Handlebars.EachView', options);
+  if (options.data.insideGroup && !options.hash.groupedRows && !options.hash.itemViewClass) {
+    new Ember.Handlebars.GroupedEach(this, path, options).render();
+  } else {
+    return Ember.Handlebars.helpers.collection.call(this, 'Ember.Handlebars.EachView', options);
+  }
 });
 
 })();
@@ -22195,7 +22317,7 @@ Ember.Handlebars.registerHelper('outlet', function(property, options) {
 var set = Ember.set, get = Ember.get;
 
 /**
-  The `Ember.Checkbox` view class renders a checkbox [input](https://developer.mozilla.org/en/HTML/Element/Input) 
+  The `Ember.Checkbox` view class renders a checkbox [input](https://developer.mozilla.org/en/HTML/Element/Input)
   element. It allows for binding an Ember property (`checked`) to the status of the checkbox.
 
   Example:
@@ -22207,7 +22329,7 @@ var set = Ember.set, get = Ember.get;
   You can add a `label` tag yourself in the template where the Ember.Checkbox is being used.
 
   ``` html
-  <label>        
+  <label>
     {{view Ember.Checkbox classNames="applicaton-specific-checkbox"}}
     Some Title
   </label>
@@ -22540,7 +22662,7 @@ var get = Ember.get, set = Ember.set;
 
   ## Layout and LayoutName properties
 
-  Because HTML `textarea` elements do not contain inner HTML the `layout` and `layoutName` 
+  Because HTML `textarea` elements do not contain inner HTML the `layout` and `layoutName`
   properties will not be applied. See `Ember.View`'s layout section for more information.
 
   ## HTML Attributes
@@ -22703,7 +22825,7 @@ var set = Ember.set,
 /**
   The Ember.Select view class renders a
   [select](https://developer.mozilla.org/en/HTML/Element/select) HTML element,
-  allowing the user to choose from a list of options. 
+  allowing the user to choose from a list of options.
 
   The text and `value` property of each `<option>` element within the `<select>` element
   are populated from the objects in the Element.Select's `content` property. The
@@ -22772,8 +22894,8 @@ var set = Ember.set,
   and which property should be used to supply the element text.
 
   The `optionValuePath` option is used to specify the path on each object to
-  the desired property for the `value` attribute.  The `optionLabelPath` 
-  specifies the path on each object to the desired property for the 
+  the desired property for the `value` attribute.  The `optionLabelPath`
+  specifies the path on each object to the desired property for the
   element's text. Both paths must reference each object itself as 'content':
 
   ``` javascript
@@ -22842,7 +22964,7 @@ var set = Ember.set,
   used to render each object providing a `selectionBinding`. When the selected
   `<option>` is changed, the property path provided to `selectionBinding`
   will be updated to match the content object of the rendered `<option>`
-  element: 
+  element:
 
   ``` javascript
   App.controller = Ember.Object.create({
@@ -22876,7 +22998,7 @@ var set = Ember.set,
   Interacting with the rendered element by selecting the first option
   ('Yehuda') will update the `selectedPerson` value of `App.controller`
   to match the content object of the newly selected `<option>`. In this
-  case it is the first object in the `App.content.content` 
+  case it is the first object in the `App.content.content`
 
   ### Supplying a Prompt
 
@@ -23306,8 +23428,8 @@ Ember Handlebars
 
 })();
 
-// Version: v1.0.0-pre.2-24-g991689c
-// Last commit: 991689c (2012-11-01 20:50:28 -0700)
+// Version: v1.0.0-pre.2-38-g9351b18
+// Last commit: 9351b18 (2012-11-16 12:23:15 -0800)
 
 
 (function() {
