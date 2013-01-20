@@ -1,3 +1,5 @@
+# Not being maintained ... SEE: [brunch-with-burnt-toast](https://github.com/chrixian/brunch-with-burnt-toast)
+
 # Ember+Stylus+Coffee+Brunch
 
 My [Brunch](http://brunch.io) skeleton for [Ember.js](http://www.emberjs.com) apps. 
