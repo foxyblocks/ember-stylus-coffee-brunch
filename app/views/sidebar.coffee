@@ -1,5 +1,5 @@
 App.SideBarController = Em.Controller.extend()
 
 App.SideBarView = Em.View.extend
-  templateName: 'templates/sidebar'
+  templateName: 'sidebar'
   classNames: ['sidebar']

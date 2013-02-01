@@ -1,5 +1,5 @@
 App.ApplicationController = Em.Controller.extend()
 
 App.ApplicationView = Em.View.extend
-  templateName: 'templates/application'
+  templateName: 'application'
   classNames: ['container-fluid']
